@@ -1,0 +1,97 @@
+Assembly language is a human readable machine code consists of sequence of instructions.
+It is a low-level programming language.
+Eg: Intel Assembly, ARM Assembly.
+It is processor-specific which means you can't run Intel Assembly code in ARM machines(bidirectional).
+
+Advantages of Assembly Language:
+It is useful in Reversing Binaries, Analyzing Malware.
+We can understand in detail how a program works.
+We have more grip over cpu than high level languages.
+Its faster than most of the high level languages.
+
+Transformation of code:
+First we write the code and save it as Assembly files(.nasm)
+Then the assembler transforms the code into Object file (.o)
+An object file is a computer file containing object code, that is, machine code output of an assembler or compiler.
+Then we use linker which uses all of our source code and generates a single executable file (elf).
+
+CPU Registers:
+CPU contains some memory to store some data for operations.
+Getting value from disk or from memory is time consuming.
+Computations in CPU Registers are fast.
+These are not permanent memory storages.
+
+General Purpose Registers:
+eax - used for calculations, return values from functions. It is called accumulator register.
+ebx - used to point starting of array. It is called base pointer.
+ecx - used as iterator in loop operations. It is called count register.
+edx - used for I/O and normal operations.
+esi - used to point source operand. It is called source index.
+edi - used to point destination operand. It is called destination index.
+
+--------------------------------------------------------------------------
+Basic Instructions:
+mov eax , 1     ; this is a comment
+add eax , ebx   ; eax = eax + ebx
+Sub eax , ebx   ; eax = eax - ebx
+or eax , edx    ; eax OR edx
+Jmp 0x12345678
+
+Position explanation:
+mov - is the mnemonics
+eax - is the destination operand
+1 - is the source operand
+; - used to comment
+
+mov eax , 1 means the value 1 will be copied to eax. whatever value is in eax is replaced by 1.
+Jmp 0x12345678 means the program will jumps to this address location.
+--------------------------------------------------------------------------------
+
+
+Sections:
+.text : contains our instructions but read only
+.data : contains initialized variables
+.bss : contains global and static variables
+.rsrc : contains resources used by executable
+
+Instruction Pointer:
+This register holds the address to next instruction to be executed.
+This is one of the best registers for hackers.
+If we can control this we can control the program flow.
+This is also a register which is represented as eip in 32-bit systems. EIP stands for Extended Instruction Pointer.
+
+File descriptor:
+0 - Input
+1 - Ouput
+2 - Errors
+
+System calls:
+It is a programmatic way in which a computer program requests a service from kernal of the operating system.
+In Assembly lang you have to use syscall numbers to call the system calls.
+
+GDB:
+GDB is a command line debugger for Linux.
+PEDA plugin helps to visualize registers, slack etc.
+GDB is a user mode debugger.
+There are many GUI debuggers which use gdb as backend.
+
+Data Types:
+BYTE - 8 BITS
+WORD - 16 BITS
+DWORD - 32 BITS
+QUAD WORD - 64 BITS
+
+
+Stack:
+It stores data elements in a Last in\First out (LIFO) manner.
+If we added a new element at one end, then we can remove element from that end only.
+We can perform only two operations on stack. ie) PUSH, POP
+Ebp points to the base of stack frame.
+Esp points to top of the stack frame.
+
+
+
+
+
+
+

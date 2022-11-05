@@ -1,0 +1,47 @@
+OS Command Injection:
+Command injection occurs when server-side code like PHP in a web application makes a system call on the hosting machine.
+Example:
+; ls
+Try os injection in php endpoints.
+
+
+Cross-Site Scripting (XSS):
+Payloads:
+<ScRiPt>alert(String.fromCharCode(104,105))</SCripT>
+
+
+Broken Authentication:
+Bruteforcing weak passwords:
+Give " admin" in username filed and create a new account.
+Now login with the new acc creds, you can impersonate admin.
+WHile creating account, just by adding a space before the username leads to account takeover.
+
+File Upload:
+Here in image uploading page, we can upload a php reverse shell file.
+And we can access or run the file by modifying the url.
+By giving the jpeg magic header we can bypass the filter.
+
+Sensitive Data Exposure:
+Directory traversal.
+
+Local Inclusion:
+https://dvwa/vulnerabilities/fi/?page=include.php
+In the above url we are including the file "include.php".
+By changing the file name to /etc/passwd we can read the passwd file.
+This is called local file inclusion.
+Sometimes in it will add .php at the end like /etc/passwd.php.
+So we can't read the contents. To bypass that give /etc/passwd%00.
+%00 is the null byte, so all the code after null will be truncated.
+
+
+Security Misconfiguration:
+Default credentials used in login panels.
+
+
+
+
+
+
+
+
+

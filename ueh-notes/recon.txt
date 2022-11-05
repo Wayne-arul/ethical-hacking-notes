@@ -1,0 +1,159 @@
+Passive Reconnaissance:
+It is the method of gathering information about a target without directly interacting with them.
+Information from internet, newspapers, library etc.
+
+Haveibeenpwned:
+It is a site which contains all breached accounts email and pass in their database.
+So you can enter you email and check if your email is breached.
+
+theHaverster:
+ TheHarvester is an OSINT tool for gathering subdomains, email addresses, open ports, banners, employee names, and much more from different public sources.
+
+Shodan:
+It is a search engine, which searches for devices which are connected to internet.
+
+Google Dorks
+It is a way to get accurate results you are looking for.
+With this you can able to find pages and files that google won't show without dorks.
+
+Pastebin:
+It is tool where you can copy paste code and share it with your friends or ask for doubts in discussion.
+You can find sensitive stuff that other developers posted here.
+
+Exif tool:
+This tool is used to extract metadata from the files.
+Mostly used against image files to retrieve metadata .
+We can get a lot of information from an image using this tool.
+Information includes date, time and place the photo is taken.
+
+Builtwith:
+It is a tool used to find technologies that companies use and used for banner grabbing.
+
+-------------------------------------------------------------------------------------------------------
+Enumeration & Scanning:
+
+Host command:
+host google.com
+The above command tells us the details about the domain.
+Details include ipaddr, mail server, dns server etc.
+
+host -t a google.com
+The above command gives us the ipv4 address.
+A records shows ipv4.
+
+host -t aaaa google.com
+The above command gives us the ipv6 address.
+AAAA records shows ipv6.
+
+host -t ns google.com
+The above command shows us the name servers of domain.
+So if one dns server gets down, it will copy data to another dns server.This process is called as zone transfer.
+
+host -l zonetransfer.me nsztm1.digi.ninja
+With this command we can able to get zone information from the particular dns server.
+zone information includes subdomains
+
+
+Nslookup & Dig command:
+
+nslookup google.com
+The above command gives us the basic information about the domain.
+Information inlcudes server ip, domain ip .
+
+nslookup -query=mx google.com
+The above command gives us the mail exchange server information.
+Information inlcudes ns, mx , aaa records.
+
+dig google.com
+The above command gives us the basic information about the domain.
+
+dig axfr @nsztml.digi.ninja zonetransfer.me
+The above command gives us the the zone information.
+
+
+-------------------------------------------------------------------------------------------------------
+dnsenum google.com
+The above command will help you get dns servers and subdomains
+
+Amass:
+It is a network mapping and attack surface discovery tool.
+It will search in almost every search engines and get us the subdomains.
+dev, testing these kind of subdomains have interesting info.
+
+Nmap:
+nmap is a network scanner.
+It is used to scan a network, banner grabbing, version and os detection, port scanning etc..
+-sC flag scan using default scripts.
+nmap -sC -sV -A <ip-addr>
+Nmap scripts:
+these scripts are used to scan for specific vulnerabilities or even we can write our own scripts.
+
+
+Nikto:
+It is software vulnerability scanner.
+Both nmap and nikto is too noisy which means it send lots of requests, so use vpn.
+nikto -h <ip-addr> -p <port>
+
+gobuster:
+It is a tool used to fuzz directories and files in a website.
+
+Dirbuster & Dirb:
+It is a tool used to fuzz or bruteforce directories and files in a website.
+-----------------------------------------------------------------------------------------------------
+
+SMB Enumeration:
+SMB stands for Server Message Block.
+It is widely used in windows systems.
+It is a protocol used to share files over network.
+ports 139 and 445 are the smb ports.
+
+nmap -p 139,445 -sV --script=smb-enum-shares <ip-addr>
+The above command scans, checks if there is file sharing happening.
+command Output:
+smb-enum-shares: 
+|   account_used: <blank>
+
+if account used is blank, then anonymous login is allowed.
+
+smbclient -L <ip-addr>
+THe above cmd will list all the smb shares
+
+\\192.168.29.186\print$:
+ print$ is generally used for printers.
+
+nbtscan <ip-addr>
+The above command tells us the name of the machine.
+
+There are tools to connect to this smb shares.
+Those tools are smbmap and smbclient.
+
+smbmap -H <ip-addr>
+If you don't give user and pass, then it will consider it as anonymous login
+
+smbclient -L //<ip-addr> --option="client min protocol=NT1"
+Don't enter any password.
+You will be logged in as anonymous user
+
+smbclient -L //<ip-addr>/<dir> --option="client min protocol=NT1"
+To get into the smb directory.
+Eg:
+smbclient -L //192.168.29.186/tmp --option="client min protocol=NT1"
+
+smbclient \\\\10.129.139.62\\WorkShares
+Use this to access Specific shares. WorkSHares can be accessed without password in our scenario.
+
+Use get command to download files from smb.
+
+enum4linux:
+This tool do every possible enumeration for smb server
+enum4linux -a 192.168.29.186
+--------------------------------------------------------------------------------------------------
+
+nmap -p 1000-9999 -T5 10.129.8.71
+-T5 boost your scan speed.
+
+
+
+
+
+

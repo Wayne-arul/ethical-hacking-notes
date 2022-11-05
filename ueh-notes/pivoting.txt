@@ -1,0 +1,27 @@
+Dynamic Port Forwarding:
+My machine ip: 192.168.29.210
+Windows machine ip: 192.168.29.190 
+
+ssh -D 9050 192.168.29.190 
+So all the traffic coming to 192.168.29.210:9050 will be forwarded to the windows machine.
+
+Now got to firefox proxy settings and set Socks4 proxy as below.
+IP - 127.0.0.1
+Port - 9050
+Here we are forwarding all traffic to port 9050.
+So all the traffic coming to our port 9050 will be forwarded to the windows machine which will then reach the destination address.
+
+Pivoting with proxychains using nmap:
+My machine ip: 192.168.29.210
+Windows machine ip: 192.168.29.190, 192.168.126.121
+Metasploitable ip: 192.168.126.129
+
+proxychains nmap -p21,80,22 192.168.126.129
+With this cmd we can pivot and scan the metasploitable machine.
+------------------------------------------------------------------------------------------
+
+
+Pivoting with Chisel:
+
+
+

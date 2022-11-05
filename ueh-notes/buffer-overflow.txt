@@ -1,0 +1,29 @@
+Immunity Debugger:
+Open an exe
+In the first window, there are 4 columns.
+1st column - It contains the memory addresses
+2nd column - It contains the opcode
+3rd column - It contains the actual instructions
+4th column - It contains the comments
+
+In the second window, it is the registers.
+It contains the eax, ebx, ecx, eip etc.. information.
+
+In the bottom right window is the stack information.
+When new function run, there will be a new stack frame created and the values will get pushed.
+
+In the bottom left window is the hex dump.
+You can search for any data drom the hex dump.
+
+
+Generate Buffer overflow pattern using metasploit:
+msf-pattern_create -h
+msf-pattern_create -l 200
+ABove cmd will give you the pattern.
+
+msf-pattern_offset -q 2Ab3
+Use the above cmd to find the offset of the keyword.
+
+
+
+

